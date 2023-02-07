@@ -13,6 +13,7 @@ import { HomeComponent } from './components/home/home.component';
 import { AddComponent } from './components/add/add.component';
 import { ItemComponent } from './components/item/item.component';
 import { FormsModule } from '@angular/forms';
+import { itemReducer } from './store/reducers/item.reducer';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import { FormsModule } from '@angular/forms';
     HttpClientModule,
     BrowserModule,
     AppRoutingModule,
-    StoreModule.forRoot({}, {}),
+    StoreModule.forRoot({ items: itemReducer }, {}),
     RouterModule.forRoot(appRoutes, { enableTracing: true }),
     BrowserAnimationsModule,
     FormsModule,

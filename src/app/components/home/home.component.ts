@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Item } from 'src/app/models/item';
+import { Store } from '@ngrx/store';
+import { Item } from 'src/app/models/Item';
 import { ItemService } from 'src/app/services/item.service';
+import { deleteItem } from 'src/app/store/actions/item.actions';
+import { AppState } from 'src/app/store/models/state.model';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -8,20 +11,16 @@ import { ItemService } from 'src/app/services/item.service';
 })
 export class HomeComponent implements OnInit {
   items: Item[] = [];
-  constructor(private itemService: ItemService) {}
+  constructor(
+    private itemService: ItemService,
+    private store: Store<AppState>
+  ) {}
 
   ngOnInit(): void {
-    this.itemService.getItems().subscribe((items) => (this.items = items));
+    this.store.select('items').subscribe((items) => (this.items = items));
   }
 
   deleteItem(item: Item) {
-    //if API Service would work:
-    // this.itemService
-    //   .deleteItem(item)
-    //   .subscribe(
-    //     () => (this.items = this.items.filter((i) => i.id !== item.id))
-    //   );
-
-    this.items = this.items.filter((i) => i.id !== item.id);
+    this.store.dispatch(deleteItem(item));
   }
 }

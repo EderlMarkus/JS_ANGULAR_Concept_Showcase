@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { Item } from 'src/app/models/item';
-
+import { Store } from '@ngrx/store';
+import { Item } from 'src/app/models/Item';
+import { AppState } from 'src/app/store/models/state.model';
+import { addItem } from 'src/app/store/actions/item.actions';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-add',
   templateUrl: './add.component.html',
@@ -9,7 +12,7 @@ import { Item } from 'src/app/models/item';
 export class AddComponent {
   item: Item;
 
-  constructor() {
+  constructor(private store: Store<AppState>, private router: Router) {
     this.item = {
       firstName: '',
       lastName: '',
@@ -23,5 +26,11 @@ export class AddComponent {
       imageUrl:
         'https://angular.io/assets/images/logos/angularjs/AngularJS-Shield.svg',
     };
+  }
+
+  onSubmit() {
+    this.store.dispatch(addItem(this.item));
+    alert(`${this.item.firstName} ${this.item.lastName} added!`);
+    this.router.navigate(['/']);
   }
 }
