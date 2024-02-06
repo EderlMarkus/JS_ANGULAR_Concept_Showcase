@@ -14,6 +14,7 @@ import { AddComponent } from './components/add/add.component';
 import { ItemComponent } from './components/item/item.component';
 import { FormsModule } from '@angular/forms';
 import { itemReducer } from './store/reducers/item.reducer';
+import { PostComponent } from './components/post/post.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { itemReducer } from './store/reducers/item.reducer';
     HomeComponent,
     AddComponent,
     ItemComponent,
+    PostComponent,
   ],
   imports: [
     ...material,
