@@ -1,8 +1,8 @@
 <div class="container p1">
   <h2>Items:</h2>
-
-  <app-post
-    *ngFor="let post of posts$ | async"
-    [post]="post"
-  ></app-post>
+  <app-post *ngFor="let post of posts$ | async" [post]="post"></app-post>
+  <p></p>
+  <button mat-raised-button color="accent" (click)="alertUser()">Alert</button>
+  <p></p>
+  <button mat-raised-button (click)="logMessage()">Log Message</button>
 </div>

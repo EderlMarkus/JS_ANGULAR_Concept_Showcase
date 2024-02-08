@@ -1,20 +1,25 @@
 import { Component, inject } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Item } from 'src/app/models/Item';
-import { AppState } from 'src/app/store/models/state.model';
-import { addItem } from 'src/app/store/actions/item.actions';
 import { Router } from '@angular/router';
 import { ItemService } from 'src/app/services/item.service';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs/internal/observable/of';
+import { canAlert } from 'src/app/mixins/alert';
+import { canConsoleLogMessage } from 'src/app/mixins/consolelog';
+
+const addComponentMixin = canConsoleLogMessage(canAlert(class Parent {
+  constructor() { }
+}))
+
+
 @Component({
   selector: 'app-add',
   templateUrl: './add.component.html',
   styleUrls: ['./add.component.scss'],
 })
-export class AddComponent {
+export class AddComponent extends addComponentMixin {
   private router: Router = inject(Router);
   private itemService: ItemService = inject(ItemService);
+  private message = "Du hast mich in der Add-Komponente geklickt."
+
   protected item: Item = {
     firstName: '',
     lastName: '',
@@ -29,9 +34,14 @@ export class AddComponent {
       'https://angular.io/assets/images/logos/angularjs/AngularJS-Shield.svg',
   }
 
- 
+  protected alertUser() {
+    this.showAlertBox(this.message);
+  }
+  protected logMessage() {
+    this.consoleLogMessage(this.message);
+  }
 
-  onSubmit() {
+  protected onSubmit() {
     this.itemService.addItem(this.item);
     alert(`${this.item.firstName} ${this.item.lastName} added!`);
     this.router.navigate(['/']);
