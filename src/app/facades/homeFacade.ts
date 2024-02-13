@@ -1,38 +1,77 @@
 import { Injectable, inject } from '@angular/core';
 import { PostService } from '../services/post.service';
 import { CommentService } from '../services/comment.service';
-import { catchError, of, mergeMap } from 'rxjs';
+import {
+  catchError,
+  mergeMap,
+  BehaviorSubject,
+  of,
+  Observable,
+  EMPTY,
+  map,
+  combineLatest,
+  distinctUntilChanged,
+  tap,
+  take,
+} from 'rxjs';
 
+export interface FacadeState {
+  data: any[];
+  loading: boolean;
+}
+
+let _state: FacadeState = {
+  data: [],
+  loading: true,
+};
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class HomeFacade {
-    private postService: PostService = inject(PostService);
-    private commentService: CommentService = inject(CommentService);
+  private store = new BehaviorSubject<FacadeState>(_state);
+  private state$ = this.store.asObservable();
+  private loading$ = this.state$.pipe(map((state) => state.loading));
+  private data$ = this.state$.pipe(
+    map((state) => state.data),
+    distinctUntilChanged()
+  );
+  private postService: PostService = inject(PostService);
+  private commentService: CommentService = inject(CommentService);
 
-    getPostWithCommentsById(postId: number) {
-        return this.postService.getById(postId).pipe(
-            catchError(e => {
-                //Spezielles Verhalten wenn der PostService failed
-                alert('Ein Fehler beim Abruf vom Postservice')
-                //Value mit dem weitergearbeitet werden soll
-                return of({id: 0})
-            }),
-            mergeMap(post => this.commentService.getByPostId(post.id)),
-            catchError(e => {
-                //Spezielles Verhalten wenn der CommentService failed
-                alert('Ein Fehler beim Abruf vom CommentService')
-                //Value mit dem weitergearbeitet werden soll
-                return of({
-                    id: 0,
-                    postId: 0,
-                    name: "Default",
-                    email: "default@error.com",
-                    body: "Dieser Aufruf war fehlerhaft"
-                  }
-                  )
-            })
-        )
-    }
+  public vm$: Observable<FacadeState> = combineLatest([
+    this.data$,
+    this.loading$,
+  ]).pipe(
+    map(([data, loading]) => {
+      return { data, loading };
+    })
+  );
+
+  //   constructor() {
+  //     this.data$.subscribe((data) =>
+  //       this.updateState({ ..._state, data, loading: false })
+  //     );
+  //   }
+
+  getPostWithCommentsById(postId: number) {
+    this.updateState({ ..._state, data: [], loading: true });
+    this.postService
+      .getById(postId)
+      .pipe(
+        take(1),
+        tap(() => this.updateState({ ..._state, loading: true })),
+        mergeMap((post) => this.commentService.getByPostId(post.id)),
+        map((posts) => this.updateState({ data: posts, loading: false }))
+      )
+      .subscribe();
+  }
+
+  toggleLoading() {
+    this.updateState({ ..._state, loading: !_state.loading });
+  }
+
+  private updateState(state: FacadeState) {
+    this.store.next(state);
+  }
 }

@@ -1,8 +1,19 @@
-<div class="container p1">
-  <h2>Items:</h2>
-  <app-post *ngFor="let post of posts$ | async" [post]="post"></app-post>
-  <p></p>
-  <button mat-raised-button color="accent" (click)="alertUser()">Alert</button>
-  <p></p>
-  <button mat-raised-button (click)="logMessage()">Log Message</button>
+<div *ngIf="vm$ | async as vm">
+  <ng-template *ngIf="!!vm.loading"><span>is Loading</span></ng-template>
+  <div class="container p1" *ngIf="!vm.loading && vm.data as posts">
+    <h2>Items:</h2>
+    <app-post *ngFor="let post of posts" [post]="post"></app-post>
+  </div>
+  <div>
+    <span>is loading: {{ vm.loading }}</span>
+    <p></p>
+    <button mat-raised-button color="accent" (click)="alertUser()">
+      Alert
+    </button>
+    <p></p>
+    <button mat-raised-button (click)="logMessage()">Log Message</button>
+    <p></p>
+    <button mat-raised-button (click)="loadPosts()">Load Posts</button>
+    <p></p>
+  </div>
 </div>

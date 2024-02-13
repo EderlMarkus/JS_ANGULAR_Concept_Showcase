@@ -15,7 +15,7 @@ export class PostService {
   private apiUrl = 'https://jsonplaceholder.typicode.com/posts';
   constructor(private http: HttpClient) {}
 
-  getById(id: number): Observable<Post>{
+  getById(id: number): Observable<Post> {
     const url = `${this.apiUrl}/${id}`;
     return this.http.get<Post>(url);
   }

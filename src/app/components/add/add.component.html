@@ -7,29 +7,51 @@
       <div class="flex container">
         <mat-form-field class="example-full-width">
           <mat-label>Write a FirstName...</mat-label>
-          <input [(ngModel)]="item.firstName" name="title" matInput placeholder="Ex. Markus" />
+          <input
+            [(ngModel)]="item.firstName"
+            name="title"
+            matInput
+            placeholder="Ex. Markus"
+          />
         </mat-form-field>
       </div>
       <div class="flex container">
         <mat-form-field class="example-full-width">
           <mat-label>Write a LastName...</mat-label>
-          <input [(ngModel)]="item.lastName" name="title" matInput placeholder="Ex. Ederl" />
+          <input
+            [(ngModel)]="item.lastName"
+            name="title"
+            matInput
+            placeholder="Ex. Ederl"
+          />
         </mat-form-field>
       </div>
       <div class="flex container">
         <mat-form-field class="example-full-width">
           <mat-label>Write a eMail...</mat-label>
-          <input [(ngModel)]="item.email" name="title" matInput placeholder="Ex. markus@ederl.com" />
+          <input
+            [(ngModel)]="item.email"
+            name="title"
+            matInput
+            placeholder="Ex. markus@ederl.com"
+          />
         </mat-form-field>
       </div>
     </form>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-raised-button color="primary" matInput placeholder="Ex. It makes me feel..." (click)="onSubmit()">
+    <button
+      mat-raised-button
+      color="primary"
+      matInput
+      placeholder="Ex. It makes me feel..."
+      (click)="onSubmit()"
+    >
       Add
     </button>
-    <button mat-raised-button color="accent" (click)="alertUser()">Alert</button>
+    <button mat-raised-button color="accent" (click)="alertUser()">
+      Alert
+    </button>
     <button mat-raised-button (click)="logMessage()">Log Message</button>
-
   </mat-card-actions>
 </mat-card>

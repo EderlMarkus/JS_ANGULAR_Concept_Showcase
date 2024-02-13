@@ -1,13 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { HomeFacade } from 'src/app/facades/homeFacade';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
+import { ErrorService } from 'src/app/facades/errorService';
+import { FacadeState, HomeFacade } from 'src/app/facades/homeFacade';
 import { canAlert } from 'src/app/mixins/alert';
 import { canConsoleLogMessage } from 'src/app/mixins/consolelog';
-import { Notifier } from 'src/app/shared/notifier';
 
-const homeComponentMixin = canConsoleLogMessage(canAlert(class Parent {
-  constructor() { }
-}))
+const homeComponentMixin = canConsoleLogMessage(canAlert(class Home {}));
 
 @Component({
   selector: 'app-home',
@@ -15,14 +13,20 @@ const homeComponentMixin = canConsoleLogMessage(canAlert(class Parent {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent extends homeComponentMixin {
-  private homeFacade: HomeFacade = inject(HomeFacade);
-  protected posts$: Observable<any> = this.homeFacade.getPostWithCommentsById(1)
-  private message = "Du hast mich in der Home-Komponente geklickt."
+  protected homeFacade: HomeFacade = inject(HomeFacade);
+  vm$: Observable<FacadeState> = this.homeFacade.vm$;
+
+  protected loading$: Observable<boolean> = of(false);
+
+  private message = 'Du hast mich in der Home-Komponente geklickt.';
 
   protected alertUser() {
     this.showAlertBox(this.message);
   }
   protected logMessage() {
     this.consoleLogMessage(this.message);
+  }
+  protected loadPosts() {
+    this.homeFacade.getPostWithCommentsById(1);
   }
 }

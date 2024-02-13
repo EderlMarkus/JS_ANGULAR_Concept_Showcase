@@ -5,10 +5,7 @@ import { ItemService } from 'src/app/services/item.service';
 import { canAlert } from 'src/app/mixins/alert';
 import { canConsoleLogMessage } from 'src/app/mixins/consolelog';
 
-const addComponentMixin = canConsoleLogMessage(canAlert(class Parent {
-  constructor() { }
-}))
-
+const addComponentMixin = canConsoleLogMessage(canAlert(class Add {}));
 
 @Component({
   selector: 'app-add',
@@ -18,7 +15,7 @@ const addComponentMixin = canConsoleLogMessage(canAlert(class Parent {
 export class AddComponent extends addComponentMixin {
   private router: Router = inject(Router);
   private itemService: ItemService = inject(ItemService);
-  private message = "Du hast mich in der Add-Komponente geklickt."
+  private message = 'Du hast mich in der Add-Komponente geklickt.';
 
   protected item: Item = {
     firstName: '',
@@ -32,7 +29,7 @@ export class AddComponent extends addComponentMixin {
     id: 0,
     imageUrl:
       'https://angular.io/assets/images/logos/angularjs/AngularJS-Shield.svg',
-  }
+  };
 
   protected alertUser() {
     this.showAlertBox(this.message);
