@@ -14,15 +14,18 @@ import {
   tap,
   take,
 } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export interface FacadeState {
   data: any[];
   loading: boolean;
+  error: HttpErrorResponse | null;
 }
 
 let _state: FacadeState = {
   data: [],
-  loading: true,
+  loading: false,
+  error: null,
 };
 
 @Injectable({
@@ -32,6 +35,7 @@ export class HomeFacade {
   private store = new BehaviorSubject<FacadeState>(_state);
   private state$ = this.store.asObservable();
   private loading$ = this.state$.pipe(map((state) => state.loading));
+  private error$ = this.state$.pipe(map((state) => state.error));
   private data$ = this.state$.pipe(
     map((state) => state.data),
     distinctUntilChanged()
@@ -42,27 +46,28 @@ export class HomeFacade {
   public vm$: Observable<FacadeState> = combineLatest([
     this.data$,
     this.loading$,
+    this.error$,
   ]).pipe(
-    map(([data, loading]) => {
-      return { data, loading };
+    map(([data, loading, error]) => {
+      return { data, loading, error };
     })
   );
 
-  //   constructor() {
-  //     this.data$.subscribe((data) =>
-  //       this.updateState({ ..._state, data, loading: false })
-  //     );
-  //   }
-
   getPostWithCommentsById(postId: number) {
-    this.updateState({ ..._state, data: [], loading: true });
+    this.updateState({ data: [], loading: true, error: null });
     this.postService
       .getById(postId)
       .pipe(
         take(1),
         tap(() => this.updateState({ ..._state, loading: true })),
+        catchError((error) => {
+          this.updateState({ ..._state, error });
+          return of({ id: 1 });
+        }),
         mergeMap((post) => this.commentService.getByPostId(post.id)),
-        map((posts) => this.updateState({ data: posts, loading: false }))
+        map((posts) =>
+          this.updateState({ ..._state, data: posts, loading: false })
+        )
       )
       .subscribe();
   }
@@ -72,6 +77,6 @@ export class HomeFacade {
   }
 
   private updateState(state: FacadeState) {
-    this.store.next(state);
+    this.store.next((_state = state));
   }
 }

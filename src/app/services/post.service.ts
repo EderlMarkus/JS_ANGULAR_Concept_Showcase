@@ -16,7 +16,7 @@ export class PostService {
   constructor(private http: HttpClient) {}
 
   getById(id: number): Observable<Post> {
-    const url = `${this.apiUrl}/${id}`;
+    const url = `${this.apiUrl}/a${id}`;
     return this.http.get<Post>(url);
   }
 
